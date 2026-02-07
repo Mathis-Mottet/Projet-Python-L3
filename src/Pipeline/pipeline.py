@@ -12,4 +12,8 @@ def run(
     
     try:
         start_date, end_date = Dates_Valide(start_date_str, end_date_str)
+    except ValueError as e:
+        print("Erreur :", e)
+        return
+    else:
         print(start_date)

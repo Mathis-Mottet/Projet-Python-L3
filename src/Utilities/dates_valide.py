@@ -5,15 +5,19 @@ def Dates_Valide(start_date_str: str, end_date_str: str):
     date_format="%d/%m/%Y"
 
     try:
-        start_date=datetime.strptime(start_date_str, date_format)
-        end_date=datetime.strptime(end_date_str, date_format)
+        start_date = datetime.strptime(start_date_str, date_format)
     except ValueError:
-        raise ValueError(f"Les dates doivent être dans le format{date_format}")
-    
-    if start_date>=end_date:
-        raise ValueError(f"{start_date} est supérieur à {end_date} ce qui est impossible")
-    
+        raise ValueError(f"La date de début doit être au format {date_format}")
+
+    try:
+        end_date = datetime.strptime(end_date_str, date_format)
+    except ValueError:
+        raise ValueError(f"La date de fin doit être au format {date_format}")
+
+    if start_date >= end_date:
+        raise ValueError(f"La date de début {start_date_str} doit être antérieure à la date de fin {end_date_str}")
+
     if end_date > datetime.today():
-        raise ValueError(f"{end_date} ne peut pas être supérieur à aujourd'hui : {datetime.today()}")
-    
+        raise ValueError(f"La date de fin {end_date_str} ne peut pas être supérieure à aujourd'hui ({datetime.today().strftime(date_format)})")
+
     return start_date, end_date
