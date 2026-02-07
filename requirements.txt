@@ -1,11 +1,5 @@
 numpy
 pandas
 matplotlib
-jupyter
-jupyterlab
-ipykernel
-aiohttp
 yfinance
-cryptography
-beautifulsoup4
 requests
