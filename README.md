@@ -14,3 +14,4 @@ source .venv/bin/activate # Mac
 ### Etape 2 ###
 Installer les packages 
 pip install -r requirements.txt obligatoire avant de démarrer
+pip install -e . obligatoire sinon les packages doivent être précédé de src et le code n'est pas concut ainsi
