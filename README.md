@@ -8,7 +8,7 @@ OU
 python -m venv .venv
 
 Puis
-.venv\Scripts\python.exe # Windows
+.venv\Scripts\Activate.ps1 # Windows
 source .venv/bin/activate # Mac
 
 ### Etape 2 ###
