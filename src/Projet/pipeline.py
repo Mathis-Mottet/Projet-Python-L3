@@ -1,54 +1,57 @@
+from Projet.verif_param import Verif_Param
 from Projet.dates_valide import Dates_Valide
-from Projet.verif_tickers import Verif_Tickers
+from Projet.ticker_de_reference import Ticker_de_Reference
+from Projet.extraction_yfinance import Extraction_yfinance
+
+
 
 def run(
-        all_tickers: list[str], 
+        all_tickers: list[str],
+        choix_reference: bool, 
         start_date_str: str, 
         end_date_str: str, 
         simulations: int, 
         horizon: int
         ) -> None:
     
-    try:
-        start_date, end_date = Dates_Valide(start_date_str, end_date_str)
-    except ValueError as e:
-        print("Erreur :", e)
-        return
-    
-    print(f"Dates validées : {start_date.strftime('%d/%m/%Y')} - {end_date.strftime('%d/%m/%Y')}")
-    
+    """
+    Lance le pipeline qui va s'occuper d'appeler toutes les fonctions et classes
 
+    Args:
+        all_tickers (list[str]): Liste des tickers
+        choix_reference (bool): Choix on non (True/False) du ticker de référence
+        start_date_str (str): Date de début
+        end_date_str (str): Date de fin
+        simulations (int): Nombre de simulation
+        horizon (int): Nombre d'horizon
 
-    ticker_reference_default = "^GSPC"
-    ticker_reference = input(f"Ticker de référence (appuyez sur Entrée pour {ticker_reference_default}) : ").strip()
+    Returns:
+        None
+    """
 
-    if ticker_reference == "":
-        ticker_reference=ticker_reference_default
-    
-    if ticker_reference in all_tickers:
-        confirmation = input(f"Vous avez déjà {ticker_reference} dans votre liste de titre. Voulez vous continuer en le mettant comme référence ? (o/n) ").lower()
+    # On vérifie les paramètres choix_reference, simulations et horizons
+    max_simulations = 10000
+    max_horizon = 252 * 10
+    Verif_Param(choix_reference, simulations, horizon, max_simulations, max_horizon) 
         
-        if confirmation !='o':
-            print("Arret")
-            return
-        else:
-            all_tickers.remove(ticker_reference)
-            all_tickers.insert(0,ticker_reference)
+    # On exécute pour check les dates
+    start_date, end_date = Dates_Valide(start_date_str, end_date_str)
     
-    else:
-        all_tickers.insert(0,ticker_reference)
+    # On affiche en format français
+    date_format = "%d/%m/%Y"
+    print(f"Dates validées : {start_date.strftime(date_format)} - {end_date.strftime(date_format)}")
     
+    # On ajoute le ticker de référence + les met en majuscule
     all_tickers = [t.upper() for t in all_tickers]
-    
-    try:
-        Verif_Tickers(all_tickers)
-    except ValueError as e:
-        print("Erreur :", e)
-        return
-    
+    all_tickers=Ticker_de_Reference(all_tickers, choix_reference)
+
+    # On crée le dictionnaire 'prix_tickers' qui contiendra le ticker (clé) et la liste de prix (valeur)
+    prix_tickers = Extraction_yfinance(all_tickers, start_date, end_date)
+
+    # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
-
-
-
-
-
+    
+    print(prix_tickers[all_tickers[4]])
+    # On check l'écriture des tickers et si yfinance les accepte
+    
+    

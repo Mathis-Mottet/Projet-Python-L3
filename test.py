@@ -11,7 +11,7 @@ tickers = ["AAPL", "MSFT"]
 for t in tickers:
     ticker = yf.Ticker(t)
     try:
-        df = ticker.history(period="365d", interval="1d")  # dernière semaine
+        df = ticker.history(period="5d", interval="1d")  # dernière semaine
         if df is None or df.empty:
             print(f"Aucune donnée récupérée pour {t}")
         else:

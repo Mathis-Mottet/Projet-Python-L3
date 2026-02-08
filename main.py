@@ -1,18 +1,37 @@
-from Projet.pipeline import run
+from Projet import run
 
+"""
+Script principal du projet.
 
+Permet de définir les paramètres de simulation
+et de lancer le pipeline principal avec run.
+"""
 
 if __name__ == "__main__":
-    tickers = ["AAPL", "MSFT"]
-    start_date = "01/01/2000"
-    end_date = "05/06/2022"
-    nombre_simulations = 10
-    horizon_simulation = 365
+    
+    # Tickers choisit (ils seront vérifiés)
+    tickers = ["AAPL", "XPO", "MSFT", "LEH.F"]
+    
+    # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False : défaut S&P500)
+    choix_ticker_reference = False
 
-    run(
-    all_tickers=tickers,
-    start_date_str=start_date,
-    end_date_str=end_date,
-    simulations=nombre_simulations,
-    horizon=horizon_simulation
-    )
+    # Dates choisis (aussi vérifiées dans le pipeline)
+    start_date = "04/01/2006"
+    end_date = "05/01/2006"
+    
+    # Paramètres pour la simulation de Monte Carlo
+    nombre_simulations = 1
+    nombre_horizon = 365
+
+    # Exécution du pipeline
+    try:
+        run(
+            all_tickers=tickers,
+            start_date_str=start_date,
+            choix_reference=choix_ticker_reference,
+            end_date_str=end_date,
+            simulations=nombre_simulations,
+            horizon=nombre_horizon
+            )
+    except Exception as e:
+        print(f"{type(e).__name__}:", e)
