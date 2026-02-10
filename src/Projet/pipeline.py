@@ -29,10 +29,10 @@ def run(
         None
     """
 
-    # On vérifie les paramètres choix_reference, simulations et horizons
+    # On vérifie les paramètres all_tickers, choix_reference, simulations et horizons
     max_simulations = 10000
     max_horizon = 252 * 10
-    Verif_Param(choix_reference, simulations, horizon, max_simulations, max_horizon) 
+    all_tickers=Verif_Param(all_tickers, choix_reference, simulations, horizon, max_simulations, max_horizon) 
         
     # On exécute pour check les dates
     start_date, end_date = Dates_Valide(start_date_str, end_date_str)
@@ -45,18 +45,14 @@ def run(
     all_tickers = [t.upper() for t in all_tickers]
     all_tickers=Ticker_de_Reference(all_tickers, choix_reference)
 
-    # On crée le dictionnaire 'prix_tickers' qui contiendra le ticker (clé) et la liste de prix (valeur)
+    # On crée le dictionnaire 'prix_tickers' et 'dates_tickers' qui contiendra le ticker (clé) et la liste de prix (valeur) et l
     prix_tickers, dates_tickers = Extraction_yfinance(all_tickers, start_date, end_date)
 
     # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
     
-    #print(prix_tickers[all_tickers[4]][0])
-    #print(dates_tickers[all_tickers[4]][0])
-    #print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[4]]][0])
+    print(prix_tickers[all_tickers[0]][0])
+    print(dates_tickers[all_tickers[0]][0])
+    print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
 
-    
-
-    # On check l'écriture des tickers et si yfinance les accepte
-    
     
