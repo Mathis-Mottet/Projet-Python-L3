@@ -10,14 +10,14 @@ et de lancer le pipeline principal avec run.
 if __name__ == "__main__":
     
     # Tickers choisit (ils seront vérifiés)
-    tickers = ["AAPL", "XPO", "MSFT", "LEH.F"]
+    tickers = ["AAPL", "AMZN", "MSFT", "GOOG", "^IXIC"]
     
     # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False : défaut S&P500)
     choix_ticker_reference = False
 
     # Dates choisis (aussi vérifiées dans le pipeline)
-    start_date = "04/01/2006"
-    end_date = "05/01/2006"
+    start_date = "06/10/2020"
+    end_date = "09/10/2024"
     
     # Paramètres pour la simulation de Monte Carlo
     nombre_simulations = 1

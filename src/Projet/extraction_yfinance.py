@@ -1,7 +1,7 @@
 import yfinance as yf
-from datetime import datetime
+from datetime import timedelta
 
-def Extraction_yfinance(tickers: list[str], start_date, end_date)-> list[float]:
+def Extraction_yfinance(all_tickers: list[str], start_date, end_date):
     """
     S'occupe de vérifier si le ticker existe dans yfinance et de renvoyer la liste de prix
 
@@ -11,30 +11,34 @@ def Extraction_yfinance(tickers: list[str], start_date, end_date)-> list[float]:
     Raises:
         ValueError: Si les tickers sont incorrectes
     """
-    prix_dic={}
+
+    prix_ticker={}
+    dates_ticker={}
     debut_cotation={}
     fin_cotation={}
     invalides = []
     
-    for ticker in tickers:
+    for ticker in all_tickers:
         
         # On récupère les prix entre les dates
-        df = yf.Ticker(ticker).history(start=start_date,end=end_date)
+        df = yf.Ticker(ticker).history(start=start_date,end=end_date + timedelta(days=1))
 
         # Si aucun prix entre les dates, on ajoute le ticker à la liste        
         if df.empty:
             invalides.append(ticker)
         else:
-            prix_dic[ticker] = df['Close'].tolist() # On choisit le Close
-            debut_cotation[ticker] = df.index[0].date() # Première date de cotation du ticker
-            fin_cotation[ticker] = df.index[-1].date() # Dernière date de cotation du ticker
+            prix_ticker[ticker] = df['Close'].tolist() # On choisit le cours du Close
+            dates_ticker[ticker]= df.index.date.tolist() # Liste des dates de cotation du ticker
+            debut_cotation[ticker] = dates_ticker[ticker][0] # Première date de cotation du ticker
+            fin_cotation[ticker] = dates_ticker[ticker][-1] # Dernière date de cotation du ticker
+            
     
     
     # On vérifie si des tickers ne renvoient rien du tout
     if len(invalides)>0:
-        raise ValueError(f"Les tickers {invalides} suivant sont invalides ou sans données entre {start_date.strftime('%d/%m/%Y')} et {end_date.strftime('%d/%m/%Y')}")
+        raise ValueError(f"Les tickers {invalides} sont invalides ou sans données entre {start_date.strftime('%d/%m/%Y')} et {end_date.strftime('%d/%m/%Y')}")
 
-    
+
     
     # On définit une liste : tickers qui finissent après la date de début
     tickers_trop_recents = [ticker for ticker, date in debut_cotation.items() if date > start_date]
@@ -48,7 +52,7 @@ def Extraction_yfinance(tickers: list[str], start_date, end_date)-> list[float]:
     
     
     # On définit une liste : tickers qui finissent avant la date de fin (incertain de si yfinance les cote mais au cas où...)
-    ticker_trop_anciens = [ticker for ticker, date in debut_cotation.items() if date < start_date]
+    ticker_trop_anciens = [ticker for ticker, date in fin_cotation.items() if date < end_date]
     
     # On retourne l'erreur associée
     if ticker_trop_anciens:
@@ -57,5 +61,18 @@ def Extraction_yfinance(tickers: list[str], start_date, end_date)-> list[float]:
             f"Dernières dates disponibles : {', '.join([fin.strftime('%d/%m/%Y') for ticker, fin in fin_cotation.items() if ticker in ticker_trop_anciens])}"
         )
     
-    # Si AUCUNE erreur, alors on retourne le dictionnaire
-    return prix_dic
+
+
+    # On vérifie que les dates renvoyées sont les mêmes (car certains ticker sont décalés, exemple de LEH.F)
+    dates_reference = dates_ticker[all_tickers[0]]
+    tickers_dates_diff = [ticker for ticker, dates in dates_ticker.items() if dates != dates_reference]
+
+    # On retourne l'erreur associée
+    if tickers_dates_diff:
+        raise ValueError(
+            f"Les tickers {tickers_dates_diff} n'ont pas les mêmes dates de cotation que le ticker de référence {all_tickers[0]}"
+        )
+
+
+    # Si AUCUNE erreur, alors on retourne le dictionnaire {ticker: list[prix]}
+    return prix_ticker, dates_ticker

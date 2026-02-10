@@ -1,6 +1,12 @@
 from datetime import datetime
 
 def Dates_Valide(start_date_str: str, end_date_str: str):
+    """
+    Docstring pour Dates_Valide
+    
+    :param start_date_str: Date de début en string
+    :param end_date_str: Date de fin en string
+    """
     
     # On fixe le format de base en France
     date_format="%d/%m/%Y"

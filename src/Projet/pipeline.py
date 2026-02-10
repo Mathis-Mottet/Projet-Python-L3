@@ -20,8 +20,8 @@ def run(
     Args:
         all_tickers (list[str]): Liste des tickers
         choix_reference (bool): Choix on non (True/False) du ticker de référence
-        start_date_str (str): Date de début
-        end_date_str (str): Date de fin
+        start_date_str (str): Date de début en string
+        end_date_str (str): Date de fin en string
         simulations (int): Nombre de simulation
         horizon (int): Nombre d'horizon
 
@@ -37,7 +37,7 @@ def run(
     # On exécute pour check les dates
     start_date, end_date = Dates_Valide(start_date_str, end_date_str)
     
-    # On affiche en format français
+    # On affiche en format français les dates
     date_format = "%d/%m/%Y"
     print(f"Dates validées : {start_date.strftime(date_format)} - {end_date.strftime(date_format)}")
     
@@ -46,12 +46,17 @@ def run(
     all_tickers=Ticker_de_Reference(all_tickers, choix_reference)
 
     # On crée le dictionnaire 'prix_tickers' qui contiendra le ticker (clé) et la liste de prix (valeur)
-    prix_tickers = Extraction_yfinance(all_tickers, start_date, end_date)
+    prix_tickers, dates_tickers = Extraction_yfinance(all_tickers, start_date, end_date)
 
     # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
     
-    print(prix_tickers[all_tickers[4]])
+    #print(prix_tickers[all_tickers[4]][0])
+    #print(dates_tickers[all_tickers[4]][0])
+    #print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[4]]][0])
+
+    
+
     # On check l'écriture des tickers et si yfinance les accepte
     
     
