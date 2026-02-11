@@ -53,9 +53,10 @@ def run(
     # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
     
-    print(prix_tickers[all_tickers[0]][0])
-    print(dates_tickers[all_tickers[0]][0])
-    print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
+    #print(prix_tickers[all_tickers[1]])
+    #print(prix_tickers[all_tickers[2]])
+    #print(dates_tickers[all_tickers[0]][0])
+    #print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
 
     #les dictionnaires pour monte carlo
     Ps = {}
@@ -64,7 +65,7 @@ def run(
     for ticker in all_tickers:
         Ps[ticker] = PriceSeries(prix_tickers[ticker])
         Ass[ticker] = Asset(ticker, Ps[ticker])
-        Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
-        Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
-        Ass[ticker].monte_carlo_result = Resultat
-    
+        #Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
+        #Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
+        #Ass[ticker].monte_carlo_result = Resultat
+    print(Ass[all_tickers[1]].correlation_with(Ass[all_tickers[0]]))

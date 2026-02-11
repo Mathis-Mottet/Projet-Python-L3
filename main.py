@@ -1,5 +1,4 @@
-from projet import run #projet minuscule pour éviter les problemes avec les majuscules dans les imports
-
+from Projet.pipeline import run 
 """
 Script principal du projet.
 
@@ -17,7 +16,7 @@ if __name__ == "__main__":
 
     # Dates choisis (aussi vérifiées dans le pipeline)
     start_date = "09/10/2002"
-    end_date = "30/12/2002"
+    end_date = "30/12/2004"
     
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
     nombre_simulations = 1
