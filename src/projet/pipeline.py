@@ -1,7 +1,7 @@
-from Projet.verif_param import Verif_Param
-from Projet.dates_valide import Dates_Valide
-from Projet.ticker_de_reference import Ticker_de_Reference
-from Projet.extraction_yfinance import Extraction_yfinance
+from .verif_param import Verif_Param
+from .dates_valide import Dates_Valide
+from .ticker_de_reference import Ticker_de_Reference
+from .extraction_yfinance import Extraction_yfinance
 
 
 

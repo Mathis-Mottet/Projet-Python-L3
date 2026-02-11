@@ -1,4 +1,4 @@
-from Projet import run
+from projet import run
 
 """
 Script principal du projet.
