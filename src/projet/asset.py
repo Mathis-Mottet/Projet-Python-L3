@@ -120,7 +120,7 @@ class Asset:
         
         return covariance / np.sqrt(var_x * var_y)
     
-if __name__ == "__main__":
+if __name__ == "__main__": #test de la classe ASSET
     # Exemple d'utilisation
     prices_aapl = PriceSeries([150, 152, 153, 155, 154])
     aapl = Asset("AAPL", prices_aapl)

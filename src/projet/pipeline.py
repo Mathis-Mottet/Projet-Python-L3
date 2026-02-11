@@ -2,6 +2,8 @@ from .verif_param import Verif_Param
 from .dates_valide import Dates_Valide
 from .ticker_de_reference import Ticker_de_Reference
 from .extraction_yfinance import Extraction_yfinance
+from .asset import Asset
+from .priceseries import PriceSeries
 
 
 
@@ -55,4 +57,14 @@ def run(
     print(dates_tickers[all_tickers[0]][0])
     print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
 
+    #les dictionnaires pour monte carlo
+    Ps = {}
+    Ass = {}
+    Mc = {}
+    for ticker in all_tickers:
+        Ps[ticker] = PriceSeries(prix_tickers[ticker])
+        Ass[ticker] = Asset(ticker, Ps[ticker])
+        Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
+        Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
+        Ass[ticker].monte_carlo_result = Resultat
     
