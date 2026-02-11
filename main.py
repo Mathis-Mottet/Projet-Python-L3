@@ -1,4 +1,4 @@
-from projet import run
+from projet import run #projet minuscule pour éviter les problemes avec les majuscules dans les imports
 
 """
 Script principal du projet.
