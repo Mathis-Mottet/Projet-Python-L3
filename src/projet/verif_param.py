@@ -44,6 +44,8 @@ def Verif_Param(all_tickers: list[str], choix_reference: bool, simulations: int,
     for ticker in all_tickers:
         if ticker not in unique_tickers:
             unique_tickers.append(ticker)
+        else:
+            print(f"Doublon ticker détecté : supression du doublon de '{ticker}'.")
     
     
     return unique_tickers

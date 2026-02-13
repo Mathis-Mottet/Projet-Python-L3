@@ -33,13 +33,22 @@ def Ticker_de_Reference(all_tickers: list[str], choix_reference: bool) -> list[s
     
     # On vérifie qu'il n'y a pas de doublons, et soit on arrete soit on révise la liste de ticker
     if ticker_reference in all_tickers:
-        confirmation = input(f"Vous avez déjà {ticker_reference} dans votre liste de titre. Voulez vous continuer en le mettant comme référence ? (o/n) ").lower()
-        
-        if confirmation !='o':
-            raise NameError(f"Arrêt par l'utilisateur en raison du choix du ticker de réference {ticker_reference}")
-        else:
-            all_tickers.remove(ticker_reference)
-            all_tickers.insert(0,ticker_reference)
+
+        boucle=True
+        while boucle:
+            confirmation = input(f"Vous avez déjà {ticker_reference} dans votre liste de titre. Voulez vous continuer en le mettant comme référence ? (o/n) ").lower().lower()
+            
+            if confirmation in ('o', 'oui'):
+                raise ValueError("Arrêt demandé par l'utilisateur")
+            
+            elif confirmation in ('n', 'non'):
+                all_tickers.remove(ticker_reference)
+                all_tickers.insert(0,ticker_reference)
+
+                boucle=False
+            
+            else:
+                    print("Réponse invalide. Tapez 'o' ou 'n'.")    
     
     else:
         all_tickers.insert(0,ticker_reference)

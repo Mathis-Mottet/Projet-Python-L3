@@ -4,7 +4,7 @@ from .ticker_de_reference import Ticker_de_Reference
 from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries
-
+import warnings
 
 
 def run(
@@ -47,12 +47,17 @@ def run(
     all_tickers = [t.upper() for t in all_tickers]
     all_tickers=Ticker_de_Reference(all_tickers, choix_reference)
 
+    # Permet d'éviter les valeurs absurdes des annualisations dans plus tard dans les class (21 car 21 jours de trading/mois) et prévenir l'utilisateur
+    nombre_min_annualisation=21 
+
     # On crée le dictionnaire 'prix_tickers' et 'dates_tickers' qui contiendra le ticker (clé) et la liste de prix (valeur) et l
-    prix_tickers, dates_tickers = Extraction_yfinance(all_tickers, start_date, end_date)
+    prix_tickers, dates_tickers = Extraction_yfinance(all_tickers, start_date, end_date, nombre_min_annualisation)
 
     # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
     
+
+
     #print(prix_tickers[all_tickers[1]])
     #print(prix_tickers[all_tickers[2]])
     #print(dates_tickers[all_tickers[0]][0])
@@ -63,9 +68,9 @@ def run(
     Ass = {}
     Mc = {}
     for ticker in all_tickers:
-        Ps[ticker] = PriceSeries(prix_tickers[ticker])
+        Ps[ticker] = PriceSeries(prix_tickers[ticker], nombre_min_annualisation)
         Ass[ticker] = Asset(ticker, Ps[ticker])
         #Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
         #Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
         #Ass[ticker].monte_carlo_result = Resultat
-    print(Ass[all_tickers[1]].correlation_with(Ass[all_tickers[0]]))
+    print(Ass[all_tickers[0]].correlation_with(Ass[all_tickers[-1]]))
