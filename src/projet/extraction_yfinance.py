@@ -7,10 +7,17 @@ def Extraction_yfinance(all_tickers: list[str], start_date, end_date, nombre_min
     S'occupe de vérifier si le ticker existe dans yfinance et de renvoyer la liste de prix
 
     Args:
-        tickers (list[str]): La liste de tickers choisit par l'utilisateur
+        all_tickers (list[str]): Liste des tickers
+        start_date: Date de début
+        end_date: Date de fin
+        nombre_min_annualisation: 21 car 21 jours de trading/mois
 
     Raises:
-        ValueError: Si les tickers sont incorrectes
+        ValueError: Si les tickers sont incorrectes ou que les dates ne matchent pas
+    
+    Returns:
+        prix_tickers: Dictionnaire {ticker: list[prix]}
+        dates_tickers: Dictionnaire {ticker: list[dates]}
     """
 
     prix_tickers={}
@@ -62,6 +69,17 @@ def Extraction_yfinance(all_tickers: list[str], start_date, end_date, nombre_min
 
 
 def verif_dates_yfinance(all_tickers: list[str], start_date, end_date, prix_tickers: dict, dates_tickers: dict)-> None:
+    """
+    Fonction vérifiant les dates renvoyées par yfinance
+
+    Args:
+        all_tickers (list[str]): Liste des tickers
+        start_date: Date de début
+        end_date: Date de fin
+    
+    Raises:
+        ValueError: Si les dates renvoyées par yfinance ne correspondent pas entre elles ou avec les dates choisies par l'utilisateur
+    """
     
     debut_cotation={}
     fin_cotation={}

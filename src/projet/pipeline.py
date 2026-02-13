@@ -3,8 +3,7 @@ from .dates_valide import Dates_Valide
 from .ticker_de_reference import Ticker_de_Reference
 from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
-from .priceseries import PriceSeries
-import warnings
+from .priceseries import PriceSeries 
 
 
 def run(
@@ -67,10 +66,25 @@ def run(
     Ps = {}
     Ass = {}
     Mc = {}
-    for ticker in all_tickers:
-        Ps[ticker] = PriceSeries(prix_tickers[ticker], nombre_min_annualisation)
-        Ass[ticker] = Asset(ticker, Ps[ticker])
-        #Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
-        #Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
-        #Ass[ticker].monte_carlo_result = Resultat
-    print(Ass[all_tickers[0]].correlation_with(Ass[all_tickers[-1]]))
+    Trading_days_per_year = 252
+    
+    test=True
+    if test:
+        for ticker in all_tickers:
+            Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation)
+            Ass[ticker] = Asset(ticker, Ps[ticker])
+            print(Ass[ticker])
+            print(Ass[ticker].current_price)
+            print(Ass[ticker].total_return)
+            print(Ass[ticker].mean_daily_return)
+            print(Ass[ticker].annualized_return)
+            print(Ass[ticker].annualized_volatility)
+            print(Ass[ticker].daily_volatility)
+            print(Ass[ticker].sharpe_ratio)
+            print(Ass[ticker].max_drawdown)
+            print(Ass[ticker].total_return)
+            print(Ass[ticker].base100)
+            #Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
+            #Resultat = Mc[ticker].execution() #execution est la fonction d'execution a renommer ou pas
+            #Ass[ticker].monte_carlo_result = Resultat
+        print(Ass[all_tickers[0]].correlation_with(Ass[all_tickers[-1]]))

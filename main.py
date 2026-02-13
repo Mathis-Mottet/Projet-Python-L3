@@ -1,13 +1,14 @@
 from Projet import run 
 
-"""
-Script principal du projet.
 
-Permet de définir les paramètres de simulation
-et de lancer le pipeline principal avec run.
-"""
 
 if __name__ == "__main__":
+    """
+    Script principal du projet.
+
+    Permet de définir les paramètres de simulation
+    et de lancer le pipeline principal avec run.
+    """
     
     # Tickers choisit (ils seront vérifiés)
     tickers = ["AAPL", "AMZN", "R", "TTE"]
@@ -16,8 +17,8 @@ if __name__ == "__main__":
     choix_ticker_reference = False
 
     # Dates choisis (aussi vérifiées dans le pipeline)
-    start_date = "09/10/2015"
-    end_date = "15/10/2015"
+    start_date = "10/10/2016"
+    end_date = "13/10/2017"
     
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
     nombre_simulations = 1

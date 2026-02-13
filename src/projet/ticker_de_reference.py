@@ -7,7 +7,7 @@ def Ticker_de_Reference(all_tickers: list[str], choix_reference: bool) -> list[s
         choix_reference (bool): Le choix de l'utilisateur de définir la référence par input
 
     Raises:
-        ValueError: _description_
+        ValueError: Problème de taille de la liste ou de choix des tickers
 
     Returns:
         list[str]: Liste des tickers avec en première position le ticker de référence
@@ -55,7 +55,7 @@ def Ticker_de_Reference(all_tickers: list[str], choix_reference: bool) -> list[s
 
 
     # On vérifie que la liste finale contient bien 2 tickers (sinon on ne pourra pas comparer avec le ticker de référence dans la suite)
-    if not len(all_tickers)>=2:
+    if len(all_tickers)<2:
         raise ValueError (
             f"Attention, la taille de la liste de tickers '{all_tickers}' après ajout du ticker de référence est inférieure à 2 : impossible. \n"
             f"Vous avez surement une liste contenant un seul ticker {all_tickers} et chercher à mettre ce ticker en référence"

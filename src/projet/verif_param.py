@@ -39,7 +39,7 @@ def Verif_Param(all_tickers: list[str], choix_reference: bool, simulations: int,
     if not len(all_tickers)>=1:
         raise ValueError (f"Le nombre de tickers '{all_tickers}' est inférieur à 1 : impossible")
     
-    # On vérifie les doublons dans la liste de ticker
+    # On vérifie les doublons dans la liste de ticker et les enlève
     unique_tickers=[]
     for ticker in all_tickers:
         if ticker not in unique_tickers:

@@ -6,6 +6,10 @@ def Dates_Valide(start_date_str: str, end_date_str: str):
     
     :param start_date_str: Date de début en string
     :param end_date_str: Date de fin en string
+
+    Returns:
+        start_date: Date de début
+        end_date: Date de fin
     """
     
     # On fixe le format de base en France
