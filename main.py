@@ -1,4 +1,4 @@
-from Projet import run 
+from Projet.pipeline import run 
 
 
 
@@ -11,18 +11,18 @@ if __name__ == "__main__":
     """
     
     # Tickers choisit (ils seront vérifiés)
-    tickers = ["AAPL"]
+    tickers = ["AAPL", "DSY"]
     
     # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False alors par défaut S&P500)
     choix_ticker_reference = False
 
     # Dates choisis (aussi vérifiées dans le pipeline)
-    start_date = "10/10/2016"
-    end_date = "13/10/2017"
+    start_date = "20/01/2023"
+    end_date = "30/01/2023"
     
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
-    nombre_simulations = 1
-    nombre_horizon = 433
+    nombre_simulations = 10000
+    nombre_horizon = 252*5 # 5 ans de trading (252 jours de trading par an)
 
     # Exécution du pipeline
     try:
