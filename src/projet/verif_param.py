@@ -1,5 +1,5 @@
 
-def Verif_Param(choix_reference: bool, simulations: int, horizon: int, max_simulations: int, max_horizon: int):
+def Verif_Param(all_tickers: list[str], choix_reference: bool, simulations: int, horizon: int, max_simulations: int, max_horizon: int):
     """_summary_
 
     Args:
@@ -33,3 +33,19 @@ def Verif_Param(choix_reference: bool, simulations: int, horizon: int, max_simul
         raise ValueError (f"Le nombre d'horizon '{horizon}' est inférieur ou égal à 0 : impossible")
     elif horizon>max_horizon:
         raise ValueError (f"Le nombre d'horizon '{horizon}' est supérieur à {max_horizon} : impossible")
+    
+
+    # On vérifie que la liste de ticker n'est pas vide (sinon aucun intérêt)
+    if not len(all_tickers)>=1:
+        raise ValueError (f"Le nombre de tickers '{all_tickers}' est inférieur à 1 : impossible")
+    
+    # On vérifie les doublons dans la liste de ticker et les enlève
+    unique_tickers=[]
+    for ticker in all_tickers:
+        if ticker not in unique_tickers:
+            unique_tickers.append(ticker)
+        else:
+            print(f"Doublon ticker détecté : supression du doublon de '{ticker}'.")
+    
+    
+    return unique_tickers
