@@ -4,7 +4,7 @@ from .ticker_de_reference import Ticker_de_Reference
 from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries 
-
+from .monte_carlo import MonteCarloSimulator
 
 def run(
         all_tickers: list[str],
@@ -62,20 +62,19 @@ def run(
     #print(dates_tickers[all_tickers[0]][0])
     #print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
 
-    #les dictionnaires pour monte carlo
+     #les dictionnaires pour monte carlo
     Ps = {}
     Ass = {}
     Mc = {}
+    Matrice_Mc ={}
     Trading_days_per_year = 252
-    
     test=True
     if test:
         for ticker in all_tickers:
             Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation)
             Ass[ticker] = Asset(ticker, Ps[ticker])
-            #Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) #MonteCarloSimulator est le nom propose a renommer ou pas
-            #Resultat = Mc[ticker].simulator() #execution est la fonction d'execution a renommer ou pas
-            #print(f"{ticker} : {Resultat[:,-1]}")
-            #Ass[ticker].monte_carlo_result = Resultat
-        #print(Ass[all_tickers[0]].correlation_with(Ass[all_tickers[-1]]))
-        
+            Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon)
+            Matrice_Mc[ticker] = Mc[ticker].simulator()
+            Ass[ticker].monte_carlo_result= Matrice_Mc[ticker]
+            print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
+            print(f"Percentiles pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles([5, 50, 95], horizon)}")

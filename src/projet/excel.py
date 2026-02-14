@@ -20,17 +20,28 @@ class Excel_Converter:
         self.simulations = simulations
         self.horizon = horizon
         
-    def to_dataframe(self, asset: Asset) -> pd.DataFrame:
+    def to_dataframe(self,asset) -> pd.DataFrame:
         #data frame prend le titre de la colonne et une liste de valeurs pour chaque colonne
         #faut modfier pour faire une boucle sur les tickers au lieu de juste un asset
+        rendement_moyen = []
+        volatilite = []
+        sharpe_ratio = []
+        max_drawdown = []
+        for ticker in self.all_tickers:
+            asset = Asset(ticker, asset.ps) #raaaaaaaaaaahhh, meme prix car test car jsp
+            rendement_moyen.append(asset.mean_daily_return)
+            volatilite.append(asset.annualized_volatility)
+            sharpe_ratio.append(asset.sharpe_ratio)
+            max_drawdown.append(asset.max_drawdown)
+       
         df = pd.DataFrame({
             'start_date': self.start_date_str,
             'end_date': self.end_date_str,
             'ticker': self.all_tickers,
-            'Rendement Moyen': [asset.mean_daily_return],
-            'Volatilité': [asset.annualized_volatility],
-            'Sharpe Ratio': [asset.sharpe_ratio],
-            'Max Drawdown': [asset.max_drawdown]
+            'Rendement Moyen': rendement_moyen,
+            'Volatilité': volatilite,
+            'Sharpe Ratio': sharpe_ratio,
+            'Max Drawdown': max_drawdown
         })
         return df
 
@@ -40,9 +51,8 @@ if __name__ == "__main__":
     prix_aapl = PriceSeries(liste1)
     aapl = Asset("AAPL", prix_aapl)
 
-
     excel_converter = Excel_Converter(
-        all_tickers=["AAPL"],
+        all_tickers=["AAPL","AMZN"],
         choix_reference=False,
         start_date_str="10/10/2016",
         end_date_str="13/10/2017",
