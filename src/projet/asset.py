@@ -68,9 +68,9 @@ class Asset:
         return self.ps.annualized_volatility()
     
     @property
-    def sharpe_ratio(self) -> float:
+    def sharpe_ratio(self, taux_sans_risque: float = 0.0) -> float:
         """Ratio de Sharpe (délègue à PriceSeries)."""
-        return self.ps.sharpe_ratio()
+        return self.ps.sharpe_ratio(taux_sans_risque)
     
     @property
     def max_drawdown(self) -> float:
