@@ -11,7 +11,7 @@ if __name__ == "__main__":
     """
     
     # Tickers choisit (ils seront vérifiés)
-    tickers = ["AAPL", "AMZN", "R", "TTE"]
+    tickers = ["AAPL"]
     
     # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False alors par défaut S&P500)
     choix_ticker_reference = False
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
     nombre_simulations = 1
-    nombre_horizon = 365
+    nombre_horizon = 433
 
     # Exécution du pipeline
     try:

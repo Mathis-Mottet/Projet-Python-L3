@@ -51,7 +51,7 @@ class PriceSeries:
         if t >= len(self.prix):
             raise IndexError(f"L'index {t} dans la fonction log_return dépasse la longueur de la liste de prix : max={len(self.prix)-1}")
         if self.prix[t-1] == 0:
-            raise ValueError(f"Attention, division par zéro pour linear_return({t})")
+            raise ValueError(f"Attention, division par zéro pour log_return({t})")
         
         return np.log(self.prix[t]/self.prix[t-1])
     
