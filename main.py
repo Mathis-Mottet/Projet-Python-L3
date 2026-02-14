@@ -11,8 +11,8 @@ if __name__ == "__main__":
     """
     
     # Tickers choisit (ils seront vérifiés)
-    tickers = ["AAPL"]
-    
+    tickers = ["AAPL","AMZN"]
+  
     # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False alors par défaut S&P500)
     choix_ticker_reference = False
 
