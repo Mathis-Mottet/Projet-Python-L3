@@ -78,4 +78,3 @@ def run(
             Ass[ticker].monte_carlo_result= Matrice_Mc[ticker]
             print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
             print(f"Percentiles pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles([5, 50, 95], horizon)}")
-            print(f"Stats finales pour {ticker} : {Ass[ticker].monte_carlo_result.stats_final()}")

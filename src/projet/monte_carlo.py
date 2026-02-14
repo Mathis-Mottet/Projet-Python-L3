@@ -24,7 +24,7 @@ class MonteCarloSimulator:
     def simulator(self):
 
         if len(self.asset.ps) < self.asset.ps.nombre_min_annualisation:
-            raise ValueError ("test") # Marche pas à revoir renvoie jamais nan
+            return MonteCarloResults(np.nan) # Pour gérer les petites valeurs 
         
         start=100 # On commence au prix de 100 pour standardiser
         mean=self.asset.mean_daily_return
@@ -60,6 +60,9 @@ class MonteCarloResults:
                 - shape (len(percentiles), horizon+1) si horizon=None
                 - shape (len(percentiles),) si horizon spécifié
         """
+        if self.matrice is np.nan:
+            return np.nan
+
         result = np.percentile(self.matrice, percentiles, axis=0)
         
         if horizon is not None:
@@ -73,6 +76,8 @@ class MonteCarloResults:
         return result
     
     def defaite(self, seuil: float) -> float:
+        if self.matrice is np.nan:
+            return np.nan
         final_values = self.matrice[:, -1]
         return np.mean(final_values < seuil)
     

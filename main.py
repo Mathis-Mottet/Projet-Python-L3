@@ -17,7 +17,7 @@ if __name__ == "__main__":
     choix_ticker_reference = False
 
     # Dates choisis (aussi vérifiées dans le pipeline)
-    start_date = "20/01/2023"
+    start_date = "20/01/2023" 
     end_date = "30/01/2023"
     
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
