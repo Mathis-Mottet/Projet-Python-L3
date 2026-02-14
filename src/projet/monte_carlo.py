@@ -47,7 +47,7 @@ class MonteCarloResults:
     def __init__(self, matrice: np.ndarray):
         self.matrice = matrice
     
-    def percentiles(self, percentiles: list[float], horizon: int)-> np.ndarray:
+    def percentiles(self, percentiles: list[float], horizon: int = None)-> np.ndarray:
         """
         Calcule les percentiles pour chaque horizon ou pour un horizon spécifique.
 
@@ -56,9 +56,7 @@ class MonteCarloResults:
             horizon: index de l'horizon à sélectionner (0 pour le prix initial, 1 pour le premier jour, etc.). Si None, calcule les percentiles pour tous les horizons.
             
         Returns:
-            np.ndarray: tableau des percentiles
-                - shape (len(percentiles), horizon+1) si horizon=None
-                - shape (len(percentiles),) si horizon spécifié
+            np.ndarray: tableau des percentiles de l'horizon spécifié ou de tous les horizons si None.
         """
         if self.matrice is np.nan:
             return np.nan

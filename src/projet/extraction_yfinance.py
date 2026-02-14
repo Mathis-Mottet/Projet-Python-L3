@@ -46,11 +46,11 @@ def Extraction_yfinance(all_tickers: list[str], start_date, end_date, nombre_min
 
             boucle=True
             while boucle:
-                choix = input("Voulez-vous arrêter la fonction ? (o/n) : ").strip().lower()
+                choix = input("Voulez-vous continuer ? (o/n) : ").strip().lower()
                 if choix in ('o', 'oui'):
-                    raise ValueError("Arrêt demandé par l'utilisateur")
-                elif choix in ('n', 'non'):
                     boucle=False
+                elif choix in ('n', 'non'):
+                    raise ValueError("Arrêt demandé par l'utilisateur")
                 else:
                     print("Réponse invalide. Tapez 'o' ou 'n'.")
             

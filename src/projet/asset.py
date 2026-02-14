@@ -1,6 +1,6 @@
 #from __future__ import annotations # Pour le pc d'Arthur
 import numpy as np
-from priceseries import PriceSeries
+from .priceseries import PriceSeries
 
 class Asset:
     """

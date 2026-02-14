@@ -1,7 +1,7 @@
 #transformer les données en dataframe pour passer a excel par pandas
 import pandas as pd
-from asset import Asset 
-from priceseries import PriceSeries
+from Projet.asset import Asset 
+from Projet.priceseries import PriceSeries
 # volatilité, rendement, monte carlo, etc
 
 class Excel_Converter: 

@@ -73,11 +73,11 @@ def run(
     test=True
     if test:
         for ticker in all_tickers:
-            Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation)
-            Ass[ticker] = Asset(ticker, Ps[ticker])
-            Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon)
-            Matrice_Mc[ticker] = Mc[ticker].simulator()
-            Ass[ticker].monte_carlo_result= Matrice_Mc[ticker]
+            Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation) # On associe à PriceSeries
+            Ass[ticker] = Asset(ticker, Ps[ticker]) # On associe à Asset
+            Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) # On associe à MonteCarloSimulator 
+            Matrice_Mc[ticker] = Mc[ticker].simulator() # On initialise la class MonteCarloResults car dépend de MonteCarloSimulator
+            Ass[ticker].monte_carlo_result= Matrice_Mc[ticker] # On associe les méthodes de MonteCarloResults à Asset pour plus de clarté et d'efficacité
             print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
             print(f"Percentiles pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles([5, 50, 95], horizon)}")
 
