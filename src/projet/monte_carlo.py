@@ -1,15 +1,17 @@
 import random
 import numpy as np
+import asset 
+
 
 def MonteCarloSimulator(self, asset, nb_simulation, nb_horizon):
-        avg, vol = asset.get_metrics()
+        self.asset.mean_daily_return, self.asset.volatility = asset.get_metrics()
         prix_finaux = np.array([])
 
 
         for i in range(nb_simulation):
                 p=100
                 for j in range(nb_horizon):
-                        p=p*(1+np.random.normal(avg, vol))
+                        p=p*(1+np.random.normal(self.asset.mean_daily_return, self.asset.volatility))
                 prix_finaux = np.append(prix_finaux, p)
         return(prix_finaux)
                                   
