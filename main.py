@@ -1,5 +1,4 @@
-from Projet.pipeline import run 
-
+from src.projet.pipeline import run 
 
 
 if __name__ == "__main__":
@@ -18,8 +17,8 @@ if __name__ == "__main__":
 
     # Dates choisis (aussi vérifiées dans le pipeline)
     start_date = "20/01/2023" 
-    end_date = "30/01/2023"
-    
+    end_date = "30/01/2024"
+   
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
     nombre_simulations = 10000
     nombre_horizon = 252*5 # 5 ans de trading (252 jours de trading par an)

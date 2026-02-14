@@ -1,3 +1,4 @@
+
 from .verif_param import Verif_Param
 from .dates_valide import Dates_Valide
 from .ticker_de_reference import Ticker_de_Reference
@@ -5,6 +6,7 @@ from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries 
 from .monte_carlo import MonteCarloSimulator
+import pandas as pd
 
 def run(
         all_tickers: list[str],
@@ -78,3 +80,26 @@ def run(
             Ass[ticker].monte_carlo_result= Matrice_Mc[ticker]
             print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
             print(f"Percentiles pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles([5, 50, 95], horizon)}")
+
+        rendement_moyen_journalier = []
+        volatilite_annualisee = []
+        sharpe_ratio = []
+        max_drawdown = []
+        for ticker in all_tickers:
+            asset = Ass[ticker]
+            rendement_moyen_journalier.append(asset.mean_daily_return)
+            volatilite_annualisee.append(asset.annualized_volatility)
+            sharpe_ratio.append(asset.sharpe_ratio)
+            max_drawdown.append(asset.max_drawdown)
+       
+        df = pd.DataFrame({
+            'start_date': start_date_str,
+            'end_date': end_date_str,
+            'ticker': all_tickers,
+            'Rendement Moyen Journalier': rendement_moyen_journalier,
+            'Volatilité Annualisée': volatilite_annualisee,
+            'Sharpe Ratio': sharpe_ratio,
+            'Max Drawdown': max_drawdown
+        })
+
+        df.to_excel("resultats.xlsx", index=False)
