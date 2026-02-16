@@ -7,6 +7,8 @@ from .asset import Asset
 from .priceseries import PriceSeries 
 from .monte_carlo import MonteCarloSimulator
 import pandas as pd
+import numpy as np
+import xlsxwriter
 
 def run(
         all_tickers: list[str],
@@ -74,25 +76,51 @@ def run(
         print(f"5% pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles(5, horizon)}")
         print(f"Corrélation avec {all_tickers[0]} : {Ass[ticker].correlation_with(Ass[all_tickers[0]])}")
 
-    rendement_moyen_journalier = []
-    volatilite_annualisee = []
-    sharpe_ratio = []
-    max_drawdown = []
-    for ticker in all_tickers:
-        asset = Ass[ticker]
-        rendement_moyen_journalier.append(asset.mean_daily_return)
-        volatilite_annualisee.append(asset.annualized_volatility)
-        sharpe_ratio.append(asset.sharpe_ratio)
-        max_drawdown.append(asset.max_drawdown)
     
-    df = pd.DataFrame({
-        'start_date': start_date_str,
-        'end_date': end_date_str,
-        'ticker': all_tickers,
-        'Rendement Moyen Journalier': rendement_moyen_journalier,
-        'Volatilité Annualisée': volatilite_annualisee,
-        'Sharpe Ratio': sharpe_ratio,
-        'Max Drawdown': max_drawdown
-    })
+    
+    #MISE EN FORME DU FICHIER EXCEL RESULTATS   
+    with pd.ExcelWriter("resultats.xlsx", engine="xlsxwriter") as writer:   #on écrit dans un fichier excel les paramètres et le résumé des métriques
+        
+        data = {
+            "Ticker": all_tickers,
+            f"Prix au {start_date_str}": [Ass[t].initial_price for t in all_tickers],
+            f"Prix au {end_date_str}": [Ass[t].current_price for t in all_tickers],
+            "Rendement total": [Ass[t].total_return for t in all_tickers],
+            "Rendement annuel": [Ass[t].annualized_return if Ass[t].annualized_return is not np.nan else "N/A" for t in all_tickers],
+            "Rendement journalier": [Ass[t].mean_daily_return for t in all_tickers],
+            "Volatilité annualisée": [Ass[t].annualized_volatility if Ass[t].annualized_volatility is not np.nan else "N/A" for t in all_tickers],
+            "Volatilité journalière": [Ass[t].daily_volatility for t in all_tickers],
+            "Ratio de Sharpe": [Ass[t].sharpe_ratio if Ass[t].sharpe_ratio is not np.nan else "N/A" for t in all_tickers],
+            "Max Drawdown": [Ass[t].max_drawdown for t in all_tickers],
+            "Monte Carlo moyenne base 100": [Ass[t].monte_carlo_result.average(horizon) if Ass[t].monte_carlo_result.average(horizon) is not np.nan else "N/A" for t in all_tickers],
+            "Monte Carlo 5% base 100": [Ass[t].monte_carlo_result.percentiles(5, horizon) if Ass[t].monte_carlo_result.percentiles(5, horizon) is not np.nan else "N/A" for t in all_tickers],
+            "Monte Carlo 50% base 100": [Ass[t].monte_carlo_result.percentiles(50, horizon) if Ass[t].monte_carlo_result.percentiles(50, horizon) is not np.nan else "N/A" for t in all_tickers],
+            "Monte Carlo 95% base 100": [Ass[t].monte_carlo_result.percentiles(95, horizon) if Ass[t].monte_carlo_result.percentiles(95, horizon) is not np.nan else "N/A" for t in all_tickers],
+            "Monte Carlo Defaite 100": [Ass[t].monte_carlo_result.defaite(100) if Ass[t].monte_carlo_result.defaite(100) is not np.nan else "N/A" for t in all_tickers],
+            }
+        df = pd.DataFrame(data)
+    
+        df = df.set_index('Ticker').T
+        df.index.name ='Ticker'
+    
+        parametres = pd.DataFrame({    #dataframe pour les paramètres
+            "Date début": [start_date_str],
+            "Date fin": [end_date_str],
+            "Nombre simulations": [simulations],
+            "Horizon": [horizon]
+        })
+        
+        parametres.to_excel(  #parametres au sommet
+            writer,
+            sheet_name="Résumé",
+            index=False,
+            startrow=0,
+            startcol=0
+        )
 
-    df.to_excel("resultats.xlsx", index=False)
+        df.to_excel(      #tableau avec les métriques à partir de la ligne 5 et colonne 1
+            writer,
+            sheet_name="Résumé",
+            startrow=3,
+            startcol=1
+        )
