@@ -81,8 +81,8 @@ def run(
     #MISE EN FORME DU FICHIER EXCEL RESULTATS   
     with pd.ExcelWriter("resultats.xlsx", engine="xlsxwriter") as writer:   #on écrit dans un fichier excel les paramètres et le résumé des métriques
         
-        data = {
-            "Ticker": all_tickers,
+        data = {                    #data a mettre dans le dataframe qui sera exporte en excel
+            "Tickers": all_tickers,
             f"Prix au {start_date_str}": [Ass[t].initial_price for t in all_tickers],
             f"Prix au {end_date_str}": [Ass[t].current_price for t in all_tickers],
             "Rendement total": [Ass[t].total_return for t in all_tickers],
@@ -100,9 +100,16 @@ def run(
             }
         df = pd.DataFrame(data)
     
-        df = df.set_index('Ticker').T
-        df.index.name ='Ticker'
+        df = df.set_index('Tickers').T   #trasnposition
+        df.index.name ='Tickers'
     
+        df.to_excel(      #tableau avec les métriques à partir de la ligne 5 et colonne 1
+            writer,
+            sheet_name="Résumé",
+            startrow=3,
+            startcol=1
+        )
+
         parametres = pd.DataFrame({    #dataframe pour les paramètres
             "Date début": [start_date_str],
             "Date fin": [end_date_str],
@@ -118,9 +125,13 @@ def run(
             startcol=0
         )
 
-        df.to_excel(      #tableau avec les métriques à partir de la ligne 5 et colonne 1
-            writer,
-            sheet_name="Résumé",
-            startrow=3,
-            startcol=1
-        )
+        for ticker in all_tickers:
+            data_ticker = {
+                "Date": dates_tickers[ticker],
+                "Prix": prix_tickers[ticker],
+                "Prix Base 100" : Ass[ticker].base100
+            }
+            df_ticker = pd.DataFrame(data_ticker)
+            df_ticker.to_excel(writer, sheet_name=ticker, index=False)   #une feuille par ticker avec les prix et les prix base 100
+
+    
