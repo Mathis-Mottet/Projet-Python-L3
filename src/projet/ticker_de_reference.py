@@ -36,16 +36,16 @@ def Ticker_de_Reference(all_tickers: list[str], choix_reference: bool) -> list[s
 
         boucle=True
         while boucle:
-            confirmation = input(f"Vous avez déjà {ticker_reference} dans votre liste de titre. Voulez vous continuer en le mettant comme référence ? (o/n) ").lower().lower()
+            confirmation = input(f"Vous avez déjà {ticker_reference} dans votre liste de titre. \n"
+                                 "Voulez vous quand même continuer en le mettant comme référence ? (o/n) ").lower().lower()
             
             if confirmation in ('o', 'oui'):
-                raise NameError(f"Arrêt par l'utilisateur en raison du choix du ticker de réference {ticker_reference}")
-            
-            elif confirmation in ('n', 'non'):
                 all_tickers.remove(ticker_reference)
-                all_tickers.insert(0,ticker_reference)
-
+                all_tickers.insert(0,ticker_reference) # On met le ticker de référence en première position de la liste
                 boucle=False
+                
+            elif confirmation in ('n', 'non'):
+                raise NameError(f"Arrêt demandé par l'utilisateur en raison du choix du ticker de référence {ticker_reference}")
             
             else:
                     print("Réponse invalide. Tapez 'o' ou 'n'.")    

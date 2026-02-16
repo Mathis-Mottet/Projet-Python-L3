@@ -59,47 +59,40 @@ def run(
     
 
 
-    #print(prix_tickers[all_tickers[1]])
-    #print(prix_tickers[all_tickers[2]])
-    #print(dates_tickers[all_tickers[0]][0])
-    #print([d.strftime("%d/%m/%Y") for d in dates_tickers[all_tickers[0]]][0])
-
-     #les dictionnaires pour monte carlo
+    # Les dictionnaires pour les class
     Ps = {}
     Ass = {}
     Mc = {}
-    Matrice_Mc ={}
     Trading_days_per_year = 252
-    test=True
-    if test:
-        for ticker in all_tickers:
-            Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation) # On associe à PriceSeries
-            Ass[ticker] = Asset(ticker, Ps[ticker]) # On associe à Asset
-            Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon) # On associe à MonteCarloSimulator 
-            Matrice_Mc[ticker] = Mc[ticker].simulator() # On initialise la class MonteCarloResults car dépend de MonteCarloSimulator
-            Ass[ticker].monte_carlo_result= Matrice_Mc[ticker] # On associe les méthodes de MonteCarloResults à Asset pour plus de clarté et d'efficacité
-            print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
-            print(f"Percentiles pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles([5, 50, 95], horizon)}")
 
-        rendement_moyen_journalier = []
-        volatilite_annualisee = []
-        sharpe_ratio = []
-        max_drawdown = []
-        for ticker in all_tickers:
-            asset = Ass[ticker]
-            rendement_moyen_journalier.append(asset.mean_daily_return)
-            volatilite_annualisee.append(asset.annualized_volatility)
-            sharpe_ratio.append(asset.sharpe_ratio)
-            max_drawdown.append(asset.max_drawdown)
-       
-        df = pd.DataFrame({
-            'start_date': start_date_str,
-            'end_date': end_date_str,
-            'ticker': all_tickers,
-            'Rendement Moyen Journalier': rendement_moyen_journalier,
-            'Volatilité Annualisée': volatilite_annualisee,
-            'Sharpe Ratio': sharpe_ratio,
-            'Max Drawdown': max_drawdown
-        })
+    for ticker in all_tickers:
+        Ps[ticker] = PriceSeries(prix_tickers[ticker], Trading_days_per_year, nombre_min_annualisation) # On associe à PriceSeries
+        Ass[ticker] = Asset(ticker, Ps[ticker]) # On associe à Asset
+        Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon).simulator() # On initialise la class MonteCarloResults car dépend de MonteCarloSimulator
+        Ass[ticker].monte_carlo_result= Mc[ticker] # On associe les méthodes de MonteCarloResults à Asset pour plus de clarté et d'efficacité (on répètera pas la simulation à chaque appel)
+        print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
+        print(f"5% pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles(5, horizon)}")
+        print(f"Corrélation avec {all_tickers[0]} : {Ass[ticker].correlation_with(Ass[all_tickers[0]])}")
 
-        df.to_excel("resultats.xlsx", index=False)
+    rendement_moyen_journalier = []
+    volatilite_annualisee = []
+    sharpe_ratio = []
+    max_drawdown = []
+    for ticker in all_tickers:
+        asset = Ass[ticker]
+        rendement_moyen_journalier.append(asset.mean_daily_return)
+        volatilite_annualisee.append(asset.annualized_volatility)
+        sharpe_ratio.append(asset.sharpe_ratio)
+        max_drawdown.append(asset.max_drawdown)
+    
+    df = pd.DataFrame({
+        'start_date': start_date_str,
+        'end_date': end_date_str,
+        'ticker': all_tickers,
+        'Rendement Moyen Journalier': rendement_moyen_journalier,
+        'Volatilité Annualisée': volatilite_annualisee,
+        'Sharpe Ratio': sharpe_ratio,
+        'Max Drawdown': max_drawdown
+    })
+
+    df.to_excel("resultats.xlsx", index=False)

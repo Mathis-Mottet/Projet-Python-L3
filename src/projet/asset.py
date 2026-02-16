@@ -38,9 +38,19 @@ class Asset:
     
 
     @property
+    def initial_price(self) -> float:
+        """Premier prix connu."""
+        return self.ps.prix[0]
+
+    @property
     def current_price(self) -> float:
         """Dernier prix connu."""
         return self.ps.prix[-1]
+    
+    @property
+    def cours(self) -> list[float]:
+        """Liste des prix (délègue à PriceSeries)."""
+        return self.ps.prix
     
     @property
     def total_return(self) -> float:
@@ -93,62 +103,23 @@ class Asset:
         Returns:
             Coefficient de corrélation entre -1 et 1
         """
+
         # Gestion des tailles trop faibles 
         if len(self.ps.prix) < self.ps.nombre_min_annualisation or len(other.ps.prix) < other.ps.nombre_min_annualisation:
             return np.nan
         
-
-        # Récupération des log-rendements
-        x = self.ps.all_log_return()
-        y = other.ps.all_log_return()
-
-        n = min(len(x), len(y))
+        # Corrélation d'un actif avec lui-même = 1
+        if self.ticker == other.ticker: 
+            return 1.0
         
-        # Alignement des longueurs (gestion des séries de tailles différentes)
-        x = x[:n]
-        y = y[:n]
-        
-        # On calcul la moyenne
-        mean_x = sum(x)/n
-        mean_y = sum(y)/n
-
-        # Centrage des valeurs
-        cx = [x_i - mean_x for x_i in x]
-        cy = [y_i - mean_y for y_i in y]
-
-        # Covariance (numérateur)
-        covariance = sum(c_x * c_y for c_x, c_y in zip(cx, cy)) / (n - 1)
-        
-        # Variances pour le dénominateur
-        var_x = sum(c_x * c_x for c_x in cx) / (n - 1)
-        var_y = sum(c_y * c_y for c_y in cy) / (n - 1)
-        
-        # Vérification de la variance nulle
-        if var_x == 0 or var_y == 0:
-            return np.nan
-        
-        return covariance / np.sqrt(var_x * var_y)
-    
-    def correlation_with_numpy(self, other: "Asset") -> float:
-        """
-        Calcule la corrélation de Pearson des log-rendements avec un autre actif.
-        
-        Args:
-            other: Un autre Asset
-        
-        Returns:
-            Coefficient de corrélation entre -1 et 1
-        """
         # Récupération des log-rendements
         x = self.ps.all_log_return() # Déjà des np.array dans PriceSeries
         y = other.ps.all_log_return()
-        
-        # Alignement des longueurs (gestion des séries de tailles différentes)
-        n = min(len(x), len(y))
-        x = x[:n]
-        y = y[:n]
-        
-        # Gestion des tailles trop faibles
+        n = len(x)
+
+        # Gestion des cas où renvoie np.nan
+        if len(x) != len(y):
+            return np.nan # Si les séries n'ont pas la même longueur cela signifie pas les mêmes dates : on ne peut pas calculer la corrélation 
         if len(self.ps.prix) < self.ps.nombre_min_annualisation or len(other.ps.prix) < other.ps.nombre_min_annualisation:
             return np.nan
         if n < 2: # N'arrivera jamais car prix en compte dans PriceSeries mais par principe
@@ -168,10 +139,8 @@ class Asset:
         # Vérification de la variance nulle
         if var_x == 0 or var_y == 0:
             return np.nan
-        
-        correlation = covariance / np.sqrt(var_x * var_y)
 
-        return correlation
+        return covariance / np.sqrt(var_x * var_y)
     
 if __name__ == "__main__": #test de la classe ASSET
     # Exemple d'utilisation

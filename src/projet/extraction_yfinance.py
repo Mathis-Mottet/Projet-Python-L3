@@ -40,13 +40,13 @@ def Extraction_yfinance(all_tickers: list[str], start_date, end_date, nombre_min
         # Vérification du nombre minimum de prix par rapport au minimum recommandé : 21
         if len(prix_tickers[ticker]) < nombre_min_annualisation and not demande_faite:
             print(
-                "Attention, pas assez de données pour calculer certains indicateurs (Si c'est le cas, renvoie de 'nan' dans le rapport). "
+                "Attention, pas assez de données pour calculer certains indicateurs (Si c'est le cas, renvoie de 'N/A' dans le rapport). "
                 f"Minimum recommandé de prix : {nombre_min_annualisation}."
             )
 
             boucle=True
             while boucle:
-                choix = input("Voulez-vous continuer ? (o/n) : ").strip().lower()
+                choix = input("Voulez-vous quand même continuer ? (o/n) : ").strip().lower()
                 if choix in ('o', 'oui'):
                     boucle=False
                 elif choix in ('n', 'non'):
@@ -127,9 +127,20 @@ def verif_dates_yfinance(all_tickers: list[str], start_date, end_date, prix_tick
 
     # On retourne l'erreur associée
     if tickers_dates_diff:
-        raise ValueError(
-            f"Les tickers {tickers_dates_diff} n'ont pas les mêmes dates de cotation que le ticker de référence {all_tickers[0]}"
-        )
+        print(
+                f"Attention, les tickers {tickers_dates_diff} n'ont pas les mêmes dates de cotation que le ticker de référence {all_tickers[0]}. \n"
+                "Cela peut entraîner des problèmes de calculs de corrélation (Si c'est le cas, renvoie de 'N/A' dans le rapport)."
+            )
+
+        boucle=True
+        while boucle:
+            choix = input("Voulez-vous quand même continuer ? (o/n) : ").strip().lower()
+            if choix in ('o', 'oui'):
+                boucle=False
+            elif choix in ('n', 'non'):
+                raise ValueError("Arrêt demandé par l'utilisateur")
+            else:
+                print("Réponse invalide. Tapez 'o' ou 'n'.")
 
 
     

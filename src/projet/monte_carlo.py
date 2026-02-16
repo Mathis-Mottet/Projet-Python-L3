@@ -47,7 +47,7 @@ class MonteCarloResults:
     def __init__(self, matrice: np.ndarray):
         self.matrice = matrice
     
-    def percentiles(self, percentiles: list[float], horizon: int = None)-> np.ndarray:
+    def percentiles(self, percentile: float, horizon: int)-> np.ndarray:
         """
         Calcule les percentiles pour chaque horizon ou pour un horizon spécifique.
 
@@ -56,28 +56,48 @@ class MonteCarloResults:
             horizon: index de l'horizon à sélectionner (0 pour le prix initial, 1 pour le premier jour, etc.). Si None, calcule les percentiles pour tous les horizons.
             
         Returns:
-            np.ndarray: tableau des percentiles de l'horizon spécifié ou de tous les horizons si None.
+            Les percentiles calculés pour l'horizon spécifié ou le dernier si horizon == None.
         """
         if self.matrice is np.nan:
             return np.nan
-
-        result = np.percentile(self.matrice, percentiles, axis=0)
         
-        if horizon is not None:
-            if horizon < 0 or horizon > self.matrice.shape[1]-1:
-                raise ValueError(
-                    f"L'horizon de la méthode percentile de asset '{horizon}' est invalide. "
-                    f"Il doit être compris entre 0 et {self.matrice.shape[1]-1}"
+        if horizon < 0 or horizon > self.matrice.shape[1]-1:
+            raise ValueError(
+                f"L'horizon de la méthode percentile de monte carlo '{horizon}' est invalide. "
+                f"Il doit être compris entre 0 et {self.matrice.shape[1]-1}"
                 )
-            result = result[:, horizon]  # Sélectionne les percentiles pour l'horizon spécifié
+        
+        if horizon is None:
+            horizon = self.matrice.shape[1]-1  # Par défaut, on prend le dernier horizon
+        
+        colonne = self.matrice[:, horizon] # On sélectionne la colonne correspondant à l'horizon spécifié
+        result = np.percentile(colonne, percentile) # On calcule le percentile de cette colonne
         
         return result
     
-    def defaite(self, seuil: float) -> float:
+    def average(self, horizon: int) -> float:
+        """
+        Calcul la moyenne des valeurs simulées pour un horizon donné.
+
+        Args:
+            horizon: index de l'horizon à sélectionner (0 pour le prix initial, 1
+        """
         if self.matrice is np.nan:
             return np.nan
-        final_values = self.matrice[:, -1]
-        return np.mean(final_values < seuil)
+        if horizon < 0 or horizon > self.matrice.shape[1]-1:
+            raise ValueError(
+                f"L'horizon de la méthode average de monte carlo '{horizon}' est invalide. "
+                f"Il doit être compris entre 0 et {self.matrice.shape[1]-1}"
+                )
+        colonne = self.matrice[:, horizon] # On sélectionne la colonne correspondant à l'horizon spécifié
+        result = np.mean(colonne) # On calcule la moyenne de cette colonne
+        return result
+    
+    def defaite(self, seuil: float=100) -> float:
+        if self.matrice is np.nan:
+            return np.nan
+        final_values = self.matrice[:, -1] # On prend les valeurs finales de chaque simulation (dernière colonne)
+        return np.mean(final_values < seuil) # Proportion de simulations où la valeur finale est inférieure au seuil de défaite
     
 
 
