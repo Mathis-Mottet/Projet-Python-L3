@@ -132,6 +132,14 @@ def run(
                 "Prix Base 100" : Ass[ticker].base100
             }
             df_ticker = pd.DataFrame(data_ticker)
-            df_ticker.to_excel(writer, sheet_name=ticker, index=False)   #une feuille par ticker avec les prix et les prix base 100
+            df_ticker.to_excel(writer, sheet_name=ticker, index=False)   #une feuille par ticker avec les prix et les prix base 
 
-    
+
+        #MARCHE PAS
+        workbook = writer.book
+        bold = workbook.add_format({'bold': True})
+        
+        #autofit
+        for sheet in writer.sheets:
+            writer.sheets[sheet].autofit()
+            writer.sheets[sheet].set_row(0, None, bold)
