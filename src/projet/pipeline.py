@@ -135,11 +135,27 @@ def run(
             df_ticker.to_excel(writer, sheet_name=ticker, index=False)   #une feuille par ticker avec les prix et les prix base 
 
 
-        #MARCHE PAS
+        #definition de bold
         workbook = writer.book
         bold = workbook.add_format({'bold': True})
         
-        #autofit
+        #autofit et bold par loop sur les sheets
         for sheet in writer.sheets:
             writer.sheets[sheet].autofit()
             writer.sheets[sheet].set_row(0, None, bold)
+
+        #création du format % et choix des rows
+        pourcent = workbook.add_format({'num_format': '0.00%'})
+        pourcent_rows = [5,6,7,8,9,11,17]  # Adjust to match sheet
+
+        #format %
+        for r in pourcent_rows:
+            writer.sheets["Résumé"].set_row(r, None, pourcent)
+
+        #loop sur les index/rows pour bold les titres 
+        for i, label in enumerate(df.index):
+            writer.sheets["Résumé"].write(3, 1, df.index.name, bold)
+            writer.sheets["Résumé"].write(4+ i, 1, label, bold)
+        
+        
+            
