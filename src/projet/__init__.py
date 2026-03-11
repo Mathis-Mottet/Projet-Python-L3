@@ -6,3 +6,4 @@ from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries
 from .monte_carlo import MonteCarloSimulator
+from .verif_nan import NA

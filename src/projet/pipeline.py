@@ -6,9 +6,10 @@ from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries 
 from .monte_carlo import MonteCarloSimulator
+from .verif_nan import NA
 import pandas as pd
 import numpy as np
-import xlsxwriter
+
 
 def run(
         all_tickers: list[str],
@@ -81,43 +82,14 @@ def run(
     #MISE EN FORME DU FICHIER EXCEL RESULTATS   
     with pd.ExcelWriter("resultats.xlsx", engine="xlsxwriter") as writer:   #on écrit dans un fichier excel les paramètres et le résumé des métriques
         
-        data = {                    #data a mettre dans le dataframe qui sera exporte en excel
-            "Tickers": all_tickers,
-            f"Prix au {start_date_str}": [Ass[t].initial_price for t in all_tickers],
-            f"Prix au {end_date_str}": [Ass[t].current_price for t in all_tickers],
-            "Rendement total": [Ass[t].total_return for t in all_tickers],
-            "Rendement annuel": [Ass[t].annualized_return if Ass[t].annualized_return is not np.nan else "N/A" for t in all_tickers],
-            "Rendement journalier": [Ass[t].mean_daily_return for t in all_tickers],
-            "Volatilité annualisée": [Ass[t].annualized_volatility if Ass[t].annualized_volatility is not np.nan else "N/A" for t in all_tickers],
-            "Volatilité journalière": [Ass[t].daily_volatility for t in all_tickers],
-            "Ratio de Sharpe": [Ass[t].sharpe_ratio if Ass[t].sharpe_ratio is not np.nan else "N/A" for t in all_tickers],
-            "Max Drawdown": [Ass[t].max_drawdown for t in all_tickers],
-            "Monte Carlo moyenne base 100": [Ass[t].monte_carlo_result.average(horizon) if Ass[t].monte_carlo_result.average(horizon) is not np.nan else "N/A" for t in all_tickers],
-            "Monte Carlo 5% base 100": [Ass[t].monte_carlo_result.percentiles(5, horizon) if Ass[t].monte_carlo_result.percentiles(5, horizon) is not np.nan else "N/A" for t in all_tickers],
-            "Monte Carlo 50% base 100": [Ass[t].monte_carlo_result.percentiles(50, horizon) if Ass[t].monte_carlo_result.percentiles(50, horizon) is not np.nan else "N/A" for t in all_tickers],
-            "Monte Carlo 95% base 100": [Ass[t].monte_carlo_result.percentiles(95, horizon) if Ass[t].monte_carlo_result.percentiles(95, horizon) is not np.nan else "N/A" for t in all_tickers],
-            "Monte Carlo Defaite 100": [Ass[t].monte_carlo_result.defaite(100) if Ass[t].monte_carlo_result.defaite(100) is not np.nan else "N/A" for t in all_tickers],
-            }
-        df = pd.DataFrame(data)
-    
-        df = df.set_index('Tickers').T   #trasnposition
-        df.index.name ='Tickers'
-    
-        df.to_excel(      #tableau avec les métriques à partir de la ligne 5 et colonne 1
-            writer,
-            sheet_name="Résumé",
-            startrow=3,
-            startcol=1
-        )
-
-        parametres = pd.DataFrame({    #dataframe pour les paramètres
+        parametres = pd.DataFrame({    # Dataframe pour les paramètres
             "Date début": [start_date_str],
             "Date fin": [end_date_str],
             "Nombre simulations": [simulations],
             "Horizon": [horizon]
         })
         
-        parametres.to_excel(  #parametres au sommet
+        parametres.to_excel(  # Paramètres au sommet de l'excel
             writer,
             sheet_name="Résumé",
             index=False,
@@ -125,6 +97,37 @@ def run(
             startcol=0
         )
 
+        data = { #data a mettre dans le dataframe qui sera exporte en excel
+            "Tickers": all_tickers,
+            f"Prix au {start_date_str}": [Ass[t].initial_price for t in all_tickers],
+            f"Prix au {end_date_str}": [Ass[t].current_price for t in all_tickers],
+            "Rendement total": [Ass[t].total_return for t in all_tickers],
+            "Rendement annuel": [NA(Ass[t].annualized_return) for t in all_tickers],
+            "Rendement journalier": [Ass[t].mean_daily_return for t in all_tickers],
+            "Volatilité annualisée": [NA(Ass[t].annualized_volatility) for t in all_tickers],
+            "Volatilité journalière": [Ass[t].daily_volatility for t in all_tickers],
+            "Ratio de Sharpe": [NA(Ass[t].sharpe_ratio) for t in all_tickers],
+            "Max Drawdown": [Ass[t].max_drawdown for t in all_tickers],
+            "Monte Carlo moyenne base 100": [NA(Ass[t].monte_carlo_result.average(horizon)) for t in all_tickers],
+            "Monte Carlo 5% base 100": [NA(Ass[t].monte_carlo_result.percentiles(5, horizon)) for t in all_tickers],
+            "Monte Carlo 50% base 100": [NA(Ass[t].monte_carlo_result.percentiles(50, horizon)) for t in all_tickers],
+            "Monte Carlo 95% base 100": [NA(Ass[t].monte_carlo_result.percentiles(95, horizon)) for t in all_tickers],
+            "Monte Carlo Defaite 100": [NA(Ass[t].monte_carlo_result.defaite(100)) for t in all_tickers],
+            }
+        df = pd.DataFrame(data)
+    
+        df = df.set_index('Tickers').T   # Transposition
+        df.index.name ='Tickers' # On remet le 'Tickers' qui s'enlève avec transpose
+    
+        df.to_excel(      # Tableau avec les métriques à partir de la ligne 4 et colonne 2
+            writer,
+            sheet_name="Résumé",
+            startrow=3,
+            startcol=1
+        )
+
+        
+        # On cherche à créer une feuille par ticker pour les données de cotation
         for ticker in all_tickers:
             data_ticker = {
                 "Date": dates_tickers[ticker],
@@ -132,7 +135,7 @@ def run(
                 "Prix Base 100" : Ass[ticker].base100
             }
             df_ticker = pd.DataFrame(data_ticker)
-            df_ticker.to_excel(writer, sheet_name=ticker, index=False)   #une feuille par ticker avec les prix et les prix base 
+            df_ticker.to_excel(writer, sheet_name=ticker, index=False)   # Une feuille par ticker donc
 
 
         #MARCHE PAS
