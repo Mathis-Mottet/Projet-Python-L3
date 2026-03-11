@@ -6,7 +6,6 @@ from .asset import Asset
 from .priceseries import PriceSeries 
 from .monte_carlo import MonteCarloSimulator
 import pandas as pd
-import numpy as np
 
 
 def run(
@@ -106,21 +105,20 @@ def run(
             "Monte Carlo 95% base 100": [NA(Ass[t].monte_carlo_result.percentiles(95, horizon)) for t in all_tickers],
             "Monte Carlo Defaite 100": [NA(Ass[t].monte_carlo_result.defaite(100)) for t in all_tickers],
             }
-        df = pd.DataFrame(data)
+        data = pd.DataFrame(data)
     
-        df = df.set_index('Tickers').T   # Transposition
-        df.index.name ='Tickers' # On 'Tickers' en index
+        data = data.set_index('Tickers').T   # Transposition
+        data.index.name ='Tickers' # On 'Tickers' en index
     
         # On envoie sur excel ligne 4 colonne 1
-        df.to_excel(
+        data.to_excel(
             writer,
             sheet_name="Résumé",
             startrow=3,
             startcol=0
         )
         
-        
-        
+    
         # On calcul la matrice de corrélation
         Matrice_correlation = []
         for t1 in all_tickers: # Double boucle pour parcourir all_ticker fois all_ticker
@@ -156,20 +154,27 @@ def run(
             df_ticker.to_excel(writer, sheet_name=ticker, index=False)   # Une feuille par ticker donc
 
 
-        #Définition du format bold
-        bold = writer.book.add_format({'bold': True})
-        
+        #Définition du format bold, arrondi, pourcentage en alignant chacun
+        wb = writer.book
+        bold = wb.add_format({'bold': True, 'align': 'center'})
+        arrondi = wb.add_format({'num_format': '0.00', 'align': 'center'})
+        pourcent = wb.add_format({'num_format': '0.00%', 'align': 'center'})
+
         # On spécifie pour la feuille "Résumé" le format de ligne 4 et 20
         ws = writer.sheets["Résumé"]
         ws.set_row(3, None, bold)
         ws.set_row(19, None, bold)
 
-        # Passe en revu chaque sheet pour autofit + bold ligne 1
+        # On spécifie le format pour les lignes de pourcentages et à centrer
+        pourcent_rows = [6,7,8,9,10,12,17]
+        for r in pourcent_rows:
+            ws.set_row(r, None, pourcent)
+        
+        # Passe en revu chaque sheet pour autofit + bold ligne 1 & définir l'arrondi
         for ws in writer.sheets.values(): 
-            ws.autofit()
+            ws.set_column(0, max(len(data.columns), len(parametres.columns)), None, arrondi) # On arrondi le bon nombre de colonne
             ws.set_row(0, None, bold)
-        
-        
+            ws.autofit()
 
     # On print un message si tout s'est bien exécuté
     print("Exécution terminée.")
