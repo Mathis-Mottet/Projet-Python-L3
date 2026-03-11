@@ -35,7 +35,6 @@ class Asset:
     def __str__(self) -> str:
         """Représentation pour l'utilisateur."""
         return f"{self.ticker}: ${self.current_price:.2f}"
-    
 
     @property
     def initial_price(self) -> float:

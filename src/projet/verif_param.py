@@ -1,5 +1,7 @@
+import numpy as np
+from datetime import datetime
 
-def Verif_Param(all_tickers: list[str], choix_reference: bool, simulations: int, horizon: int, max_simulations: int, max_horizon: int):
+def Param_Valides(all_tickers: list[str], choix_reference: bool, simulations: int, horizon: int, max_simulations: int, max_horizon: int):
     """_summary_
 
     Args:
@@ -49,3 +51,47 @@ def Verif_Param(all_tickers: list[str], choix_reference: bool, simulations: int,
     
     
     return unique_tickers
+
+
+def Dates_Valides(start_date_str: str, end_date_str: str):
+    """
+    Docstring pour Dates_Valide
+    
+    :param start_date_str: Date de début en string
+    :param end_date_str: Date de fin en string
+
+    Returns:
+        start_date: Date de début
+        end_date: Date de fin
+    """
+    
+    # On fixe le format de base en France
+    date_format="%d/%m/%Y"
+
+    # On fait différent try pour vérifier la synthaxe et la cohérence
+    try:
+        start_date = datetime.strptime(start_date_str, date_format).date()
+    except ValueError:
+        raise ValueError("La date de début doit être au format dd/mm/yyyy")
+
+    try:
+        end_date = datetime.strptime(end_date_str, date_format).date()
+    except ValueError:
+        raise ValueError("La date de fin doit être au format dd/mm/yyyy")
+
+    if start_date >= end_date:
+        raise ValueError(f"La date de début {start_date_str} doit être antérieure à la date de fin {end_date_str}")
+
+    if end_date >= datetime.today().date():
+        raise ValueError(f"La date de fin {end_date_str} ne peut pas être supérieure ou égale à aujourd'hui ({datetime.today().strftime(date_format)})")    
+    
+
+    return start_date, end_date
+
+
+def NA(x):
+    """Renvoie N/A si x est un NaN, sinon renvoie x"""
+    if np.isnan(x):
+        return "N/A"
+    else:
+        return x

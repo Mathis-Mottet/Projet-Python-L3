@@ -1,12 +1,10 @@
 
-from .verif_param import Verif_Param
-from .dates_valide import Dates_Valide
+from .verif_param import Param_Valides, Dates_Valides, NA
 from .ticker_de_reference import Ticker_de_Reference
 from .extraction_yfinance import Extraction_yfinance
 from .asset import Asset
 from .priceseries import PriceSeries 
 from .monte_carlo import MonteCarloSimulator
-from .verif_nan import NA
 import pandas as pd
 import numpy as np
 
@@ -32,16 +30,16 @@ def run(
         horizon (int): Nombre d'horizon
 
     Returns:
-        None
+        None mais enregistre un fichier excel "resultats.xlsx" avec les résultats et les paramètres
     """
 
     # On vérifie les paramètres all_tickers, choix_reference, simulations et horizons
     max_simulations = 10000
     max_horizon = 252 * 10
-    all_tickers=Verif_Param(all_tickers, choix_reference, simulations, horizon, max_simulations, max_horizon) 
+    all_tickers=Param_Valides(all_tickers, choix_reference, simulations, horizon, max_simulations, max_horizon) 
         
     # On exécute pour check les dates
-    start_date, end_date = Dates_Valide(start_date_str, end_date_str)
+    start_date, end_date = Dates_Valides(start_date_str, end_date_str)
     
     # On affiche en format français les dates
     date_format = "%d/%m/%Y"
@@ -60,8 +58,6 @@ def run(
     # On affiche la liste des tickers
     print(f"Liste finale de tickers : {all_tickers}")
     
-
-
     # Les dictionnaires pour les class
     Ps = {}
     Ass = {}
@@ -73,10 +69,6 @@ def run(
         Ass[ticker] = Asset(ticker, Ps[ticker]) # On associe à Asset
         Mc[ticker] = MonteCarloSimulator(Ass[ticker], simulations, horizon).simulator() # On initialise la class MonteCarloResults car dépend de MonteCarloSimulator
         Ass[ticker].monte_carlo_result= Mc[ticker] # On associe les méthodes de MonteCarloResults à Asset pour plus de clarté et d'efficacité (on répètera pas la simulation à chaque appel)
-        print(f"Defaite pour {ticker} : {Ass[ticker].monte_carlo_result.defaite(100)}")
-        print(f"5% pour {ticker} : {Ass[ticker].monte_carlo_result.percentiles(5, horizon)}")
-        print(f"Corrélation avec {all_tickers[0]} : {Ass[ticker].correlation_with(Ass[all_tickers[0]])}")
-
     
     
     #MISE EN FORME DU FICHIER EXCEL RESULTATS   
@@ -117,16 +109,42 @@ def run(
         df = pd.DataFrame(data)
     
         df = df.set_index('Tickers').T   # Transposition
-        df.index.name ='Tickers' # On remet le 'Tickers' qui s'enlève avec transpose
+        df.index.name ='Tickers' # On 'Tickers' en index
     
-        df.to_excel(      # Tableau avec les métriques à partir de la ligne 4 et colonne 2
+        # On envoie sur excel ligne 4 colonne 1
+        df.to_excel(
             writer,
             sheet_name="Résumé",
             startrow=3,
-            startcol=1
+            startcol=0
+        )
+        
+        
+        
+        # On calcul la matrice de corrélation
+        Matrice_correlation = []
+        for t1 in all_tickers: # Double boucle pour parcourir all_ticker fois all_ticker
+            ligne = []
+            for t2 in all_tickers:
+                ligne.append(NA(Ass[t1].correlation_with(Ass[t2]))) # On ajoute chaque corrélation
+            Matrice_correlation.append(ligne)
+
+        # On transforme en df avec en index et columns les tickers pour faire une matrice symétrique
+        df_correlation = pd.DataFrame(
+            Matrice_correlation,
+            index=all_tickers,
+            columns=all_tickers
+        )
+        df_correlation.index.name = "Matrice de corrélation"
+
+        # On envoie sur excel ligne 20 colonne 1
+        df_correlation.to_excel(
+            writer,
+            sheet_name="Résumé",
+            startrow=19,
+            startcol=0
         )
 
-        
         # On cherche à créer une feuille par ticker pour les données de cotation
         for ticker in all_tickers:
             data_ticker = {
@@ -138,11 +156,20 @@ def run(
             df_ticker.to_excel(writer, sheet_name=ticker, index=False)   # Une feuille par ticker donc
 
 
-        #MARCHE PAS
-        workbook = writer.book
-        bold = workbook.add_format({'bold': True})
+        #Définition du format bold
+        bold = writer.book.add_format({'bold': True})
         
-        #autofit
-        for sheet in writer.sheets:
-            writer.sheets[sheet].autofit()
-            writer.sheets[sheet].set_row(0, None, bold)
+        # On spécifie pour la feuille "Résumé" le format de ligne 4 et 20
+        ws = writer.sheets["Résumé"]
+        ws.set_row(3, None, bold)
+        ws.set_row(19, None, bold)
+
+        # Passe en revu chaque sheet pour autofit + bold ligne 1
+        for ws in writer.sheets.values(): 
+            ws.autofit()
+            ws.set_row(0, None, bold)
+        
+        
+
+    # On print un message si tout s'est bien exécuté
+    print("Exécution terminée.")
