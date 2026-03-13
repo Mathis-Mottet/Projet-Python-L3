@@ -32,14 +32,14 @@ class MonteCarloSimulator:
 
         # Matrice avec en ligne les simulations, en colonne les horizons
         matrice=np.zeros((self.simulation,self.horizon+1)) # +1 car la première colonne est 100
-        matrice[:,0]=start
+        matrice[:,0]=start # On initialise la première colonne à 100 (prix de départ) pour toutes les simulations
 
         rendement=np.random.normal(mean,vol, size=(self.simulation, self.horizon)) # Calcul la matrice des rendements aléatoire
-        cumul_rendement=np.cumsum(rendement, axis=1) # Additionne les lignes de gauche à droite CAR LES RENDEMENTS SONT DES LOG
+        cumul_rendement=np.cumsum(rendement, axis=1) # Additionne les lignes de gauche à droite UNIQUEMENT CAR LES RENDEMENTS SONT DES LOG
 
-        matrice[:,1:]=start*np.exp(cumul_rendement) # On transforme en rendement linéaire
+        matrice[:,1:]=start*np.exp(cumul_rendement) # On transforme en rendement linéaire et multiplie par le prix de départ pour obtenir les prix simulés à chaque horizon
 
-        return MonteCarloResults(matrice) # On retourne la matrice des résultats encapsulée dans une classe pour plus de clarté et d'efficacité (MonetCarl faite 1 fois et on peut faire plein de calculs dessus sans refaire la simulation)
+        return MonteCarloResults(matrice) # On retourne la matrice des résultats encapsulée dans une classe pour plus de clarté et d'efficacité (Monte Carlo faite 1 fois et on peut faire plein de calculs dessus sans refaire la simulation=efficient + meme matrice)
 
 
 
@@ -61,10 +61,11 @@ class MonteCarloResults:
         if self.matrice is np.nan:
             return np.nan
         
-        if horizon < 0 or horizon > self.matrice.shape[1]-1:
+        # Inutile dans notre cas car notre matrice aura toujours horizon+1 colonne et on a déjà vérifié que l'horizon est positif, mais c'est pour la scalabilité si on veut faire des calculs sur d'autres matrices
+        if horizon <= 0 or horizon > self.matrice.shape[1]-1:
             raise ValueError(
                 f"L'horizon de la méthode percentile de monte carlo '{horizon}' est invalide. "
-                f"Il doit être compris entre 0 et {self.matrice.shape[1]-1}"
+                f"Il doit être compris entre 1 et {self.matrice.shape[1]-1}"
                 )
         
         if horizon is None:
@@ -84,10 +85,12 @@ class MonteCarloResults:
         """
         if self.matrice is np.nan:
             return np.nan
-        if horizon < 0 or horizon > self.matrice.shape[1]-1:
+        
+        # Inutile dans notre cas car notre matrice aura toujours horizon+1 colonne et on a déjà vérifié que l'horizon est positif, mais c'est pour la scalabilité si on veut faire des calculs sur d'autres matrices
+        if horizon <= 0 or horizon > self.matrice.shape[1]-1:
             raise ValueError(
                 f"L'horizon de la méthode average de monte carlo '{horizon}' est invalide. "
-                f"Il doit être compris entre 0 et {self.matrice.shape[1]-1}"
+                f"Il doit être compris entre 1 et {self.matrice.shape[1]-1}"
                 )
         colonne = self.matrice[:, horizon] # On sélectionne la colonne correspondant à l'horizon spécifié
         result = np.mean(colonne) # On calcule la moyenne de cette colonne

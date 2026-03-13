@@ -1,6 +1,5 @@
 from src.projet.pipeline import run 
 
-
 if __name__ == "__main__":
     """
     Script principal du projet.
@@ -10,13 +9,13 @@ if __name__ == "__main__":
     """
     
     # Tickers choisit (ils seront vérifiés)
-    tickers = ["AAPL", "DSY"]
+    tickers = ["AAPL", "DSY", "MSFT", "AMZN", "GOOGL"]
     
     # Décide (True/False) s'il l'on souhaite choisir nous même le ticker de référence (si False alors par défaut S&P500)
     choix_ticker_reference = False
 
     # Dates choisis (aussi vérifiées dans le pipeline)
-    start_date = "20/01/2023" 
+    start_date = "23/01/2023" 
     end_date = "30/01/2024"
    
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
