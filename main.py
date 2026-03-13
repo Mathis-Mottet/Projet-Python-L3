@@ -1,4 +1,4 @@
-from src.projet.pipeline import run 
+from projet import run
 
 if __name__ == "__main__":
     """
