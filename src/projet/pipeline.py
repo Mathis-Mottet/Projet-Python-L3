@@ -1,6 +1,6 @@
 
-from Projet.fonctions import Param_Valides, Dates_Valides, Ticker_de_Reference, Extraction_yfinance, NA
-from Projet.classes import Asset, PriceSeries, MonteCarloSimulator
+from projet.fonctions import Param_Valides, Dates_Valides, Ticker_de_Reference, Extraction_yfinance, NA
+from projet.classes import Asset, PriceSeries, MonteCarloSimulator
 import pandas as pd
 
 
