@@ -40,7 +40,7 @@ def run(
     # On exécute pour check les dates
     start_date, end_date = Dates_Valides(start_date_str, end_date_str)
     
-    # On affiche en format français les dates
+    # On affiche en format français les dates dans le terminal
     date_format = "%d/%m/%Y"
     print(f"Dates validées : {start_date.strftime(date_format)} - {end_date.strftime(date_format)}")
     
@@ -88,7 +88,7 @@ def run(
             startcol=0
         )
 
-        data = { #data a mettre dans le dataframe qui sera exporte en excel
+        data = { #data a mettre dans le dataframe qui sera exporte en excel. NA() est une fonction
             "Tickers": all_tickers,
             f"Prix au {start_date_str}": [Ass[t].initial_price for t in all_tickers],
             f"Prix au {end_date_str}": [Ass[t].current_price for t in all_tickers],
