@@ -1,4 +1,4 @@
-from Projet.pipeline import run 
+from Projet import run 
 
 
 if __name__ == "__main__":
