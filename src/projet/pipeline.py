@@ -73,7 +73,7 @@ def run(
             "Date début": [start_date_str],
             "Date fin": [end_date_str],
             "Nombre simulations": [simulations],
-            "Horizon": [horizon]
+            "Horizon (jours)": [horizon]
         })
         
         parametres.to_excel(  # Paramètres au sommet de l'excel
