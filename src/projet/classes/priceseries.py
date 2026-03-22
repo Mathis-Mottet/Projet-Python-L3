@@ -14,7 +14,7 @@ class PriceSeries:
             self.prix = np.array(prix, dtype=float) # Pour etre compatible np des fonctions
             self.Trading_days_per_year = Trading_days_per_year
             self.nombre_min_annualisation=nombre_min_annualisation # Permet d'éviter les valeurs absurdes des annualisation (21 car 21 jours de trading/mois) et prévenir l'utilisateur
-            self._cached_all_log_return = None # Permet de stocker le vecteur all_log_return et ne pas avoir à le recalculer (gain d'efficacité)
+            self._cached_all_log_return = None # Permet de stocker le vecteur all_log_return et ne pas avoir à le recalculer (gain d'efficacité minime car numpy très efficace mais par principe)
     
     def __repr__(self): # On copie celle du cours par principe
         return f"TimeSeries({self.prix!r})"
@@ -64,6 +64,7 @@ class PriceSeries:
             self._cached_all_log_return= np.log(self.prix[1:] / self.prix[:-1]) # np permet d'etre très efficace, nécessaire pour de grosse Monte Carlo
         
         return self._cached_all_log_return
+        #return np.log(self.prix[1:] / self.prix[:-1])
 
     # Calcul du rendement moyen journalier logarithmique pour la Monte Carlo 
     def mean_daily_return(self) -> float: 
@@ -95,7 +96,6 @@ class PriceSeries:
             return np.nan
         else:
             return self.daily_volatility() * np.sqrt(self.Trading_days_per_year)
-    
     
     
    

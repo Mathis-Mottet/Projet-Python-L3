@@ -1,7 +1,7 @@
 import numpy as np
 from datetime import datetime
 
-def Param_Valides(all_tickers: list[str], choix_reference: bool, simulations: int, horizon: int, max_simulations: int, max_horizon: int):
+def Param_Valides(all_tickers: list[str], choix_reference: bool, simulations: int, horizon: int, taux_sans_risque: float, max_simulations: int, max_horizon: int):
     """_summary_
 
     Args:
@@ -16,7 +16,7 @@ def Param_Valides(all_tickers: list[str], choix_reference: bool, simulations: in
     
     # On vérifie que le type de choix_reference (possibilité de choisir son ticker de référence) est un bool
     if not isinstance(choix_reference, bool):
-        raise TypeError (f"'{choix_reference}' n'est pas de type bool : True ou False")
+        raise TypeError (f"'{choix_reference}' pour le choix_reference n'est pas de type bool : True ou False")
     
     # On vérifie que le nombre de simulation et d'horizon est "acceptable" + le type
     if type(simulations) is not int:
@@ -36,6 +36,14 @@ def Param_Valides(all_tickers: list[str], choix_reference: bool, simulations: in
     elif horizon>max_horizon:
         raise ValueError (f"Le nombre d'horizon '{horizon}' est supérieur à {max_horizon} : impossible")
     
+    # On vérifie que le taux sans risque est bien un nombre
+    if not isinstance(taux_sans_risque, (int,float)):
+        raise TypeError (f"'{taux_sans_risque}' pour le taux sans risque n'est pas un nombre : impossible")
+
+    # On vérifie les valeurs absurdes de taux sans risque
+    if taux_sans_risque < -5 or taux_sans_risque > 10:
+        raise ValueError(
+            f"'{taux_sans_risque}' est une valeur incohérente pour un taux sans risque : doit etre entre -5 et 10")
 
     # On vérifie que la liste de ticker n'est pas vide (sinon aucun intérêt)
     if not len(all_tickers)>=1:

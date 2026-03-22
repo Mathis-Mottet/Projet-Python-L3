@@ -1,4 +1,3 @@
-#from __future__ import annotations # Pour le pc d'Arthur
 import numpy as np
 from .priceseries import PriceSeries
 
@@ -76,7 +75,7 @@ class Asset:
         """Volatilité annualisée (délègue à PriceSeries)."""
         return self.ps.annualized_volatility()
     
-    @property
+    
     def sharpe_ratio(self, taux_sans_risque: float = 0.0) -> float:
         """Ratio de Sharpe (délègue à PriceSeries)."""
         return self.ps.sharpe_ratio(taux_sans_risque)

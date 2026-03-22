@@ -1,4 +1,3 @@
-
 from projet.fonctions import Param_Valides, Dates_Valides, Ticker_de_Reference, Extraction_yfinance, NA
 from projet.classes import Asset, PriceSeries, MonteCarloSimulator
 import pandas as pd
@@ -10,7 +9,8 @@ def run(
         start_date_str: str, 
         end_date_str: str, 
         simulations: int, 
-        horizon: int
+        horizon: int,
+        TSR: float
         ) -> None:
     
     """
@@ -23,16 +23,17 @@ def run(
         end_date_str (str): Date de fin en string
         simulations (int): Nombre de simulation
         horizon (int): Nombre d'horizon
+        TSR (float): Taux sans risque
 
     Returns:
         None mais enregistre un fichier excel "resultats.xlsx" avec les résultats et les paramètres
     """
 
     # On vérifie les paramètres all_tickers, choix_reference, simulations et horizons
-    max_simulations = 10000
+    max_simulations = 100000
     max_horizon = 252 * 10
-    all_tickers=Param_Valides(all_tickers, choix_reference, simulations, horizon, max_simulations, max_horizon) 
-        
+    all_tickers=Param_Valides(all_tickers, choix_reference, simulations, horizon, TSR, max_simulations, max_horizon) 
+    
     # On exécute pour check les dates
     start_date, end_date = Dates_Valides(start_date_str, end_date_str)
     
@@ -73,12 +74,13 @@ def run(
             "Date début": [start_date_str],
             "Date fin": [end_date_str],
             "Nombre simulations": [simulations],
-            "Horizon (jours)": [horizon]
+            "Horizon (jours)": [horizon],
+            "Taux sans risque": [TSR/100]
         })
         
         parametres.to_excel(  # Paramètres au sommet de l'excel
             writer,
-            sheet_name="Résumé",
+            sheet_name="Rapport",
             index=False,
             startrow=0,
             startcol=0
@@ -93,7 +95,7 @@ def run(
             "Rendement journalier": [Ass[t].mean_daily_return for t in all_tickers],
             "Volatilité annualisée": [NA(Ass[t].annualized_volatility) for t in all_tickers],
             "Volatilité journalière": [Ass[t].daily_volatility for t in all_tickers],
-            "Ratio de Sharpe": [NA(Ass[t].sharpe_ratio) for t in all_tickers],
+            "Ratio de Sharpe": [NA(Ass[t].sharpe_ratio(TSR/100)) for t in all_tickers],
             "Max Drawdown": [Ass[t].max_drawdown for t in all_tickers],
             "Monte Carlo moyenne base 100": [NA(Ass[t].monte_carlo_result.average(horizon)) for t in all_tickers],
             "Monte Carlo 5% base 100": [NA(Ass[t].monte_carlo_result.percentiles(5, horizon)) for t in all_tickers],
@@ -109,12 +111,11 @@ def run(
         # On envoie sur excel ligne 4 colonne 1
         data.to_excel(
             writer,
-            sheet_name="Résumé",
+            sheet_name="Rapport",
             startrow=3,
             startcol=0
         )
         
-    
         # On calcul la matrice de corrélation
         Matrice_correlation = []
         for t1 in all_tickers: # Double boucle pour parcourir all_ticker fois all_ticker
@@ -134,7 +135,7 @@ def run(
         # On envoie sur excel ligne 20 colonne 1
         df_correlation.to_excel(
             writer,
-            sheet_name="Résumé",
+            sheet_name="Rapport",
             startrow=19,
             startcol=0
         )
@@ -156,8 +157,8 @@ def run(
         arrondi = wb.add_format({'num_format': '0.00', 'align': 'center'})
         pourcent = wb.add_format({'num_format': '0.00%', 'align': 'center'})
 
-        # On spécifie pour la feuille "Résumé" le format de ligne 4 et 20
-        ws = writer.sheets["Résumé"]
+        # On spécifie pour la feuille "Rapport" le format de ligne 4 et 20
+        ws = writer.sheets["Rapport"]
         ws.set_row(3, None, bold)
         ws.set_row(19, None, bold)
 
