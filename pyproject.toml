@@ -7,7 +7,12 @@ authors = [
     { name = "romanschw", email = "roman.herce@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pandas",
+    "numpy",
+    "yfinance",
+    "xlsxwriter"
+    ]
  
 [build-system]
 requires = ["uv_build>=0.9.8,<0.10.0"]

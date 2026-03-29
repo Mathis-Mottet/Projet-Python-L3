@@ -39,8 +39,7 @@ source .venv/bin/activate     # Mac/Linux
 ### Étape 2 — Installer les dépendances
 
 ```bash
-pip install -r requirements.txt   # installe pandas, numpy, yfinance, xlsxwriter
-pip install -e .                  # installe le projet en mode éditable (obligatoire pour les imports internes)
+pip install -e . # installe le projet en mode éditable ET ses dépendances (obligatoire pour les imports internes)
 ```
 
 > Sans `pip install -e .`, Python ne reconnaît pas les imports internes du projet (`from projet.classes import ...`) car le dossier `src/` n'est pas dans le `PYTHONPATH` par défaut.

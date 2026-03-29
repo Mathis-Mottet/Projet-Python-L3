@@ -1,34 +1,20 @@
 # Environnement virtuel
 .venv/
-venv/
-ENV/
-env/
 
-# Fichiers Python compilés
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+*.pyo
+.eggs/
+*.egg-info/
 
-# Fichiers Jupyter
-.ipynb_checkpoints
+# Output du projet
+resultats.xlsx
 
-# Fichiers de logs
-*.log
-
-# Fichiers temporaires
-*.tmp
-*.swp
-*.swo
-
-# Fichiers OS spécifiques
-.DS_Store
-Thumbs.db
-
-# Fichiers IDE
+# IDE
 .vscode/
 .idea/
 
-# Packages et distributions
-*.egg-info/
-dist/
-build/
+# OS
+.DS_Store
+Thumbs.db
