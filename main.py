@@ -20,7 +20,7 @@ if __name__ == "__main__":
    
     # Paramètres pour la simulation de Monte Carlo (ils seront vérifiés)
     nombre_simulations = 1000
-    nombre_horizon = 252*1 # 5 ans de trading (252 jours de trading par an)
+    nombre_horizon = 252*5 # 5 ans de trading (252 jours de trading par an)
 
     # Le taux sans risque pour le ratio de Sharpe (convertit en pourcent par le code)
     taux_sans_risque=2
